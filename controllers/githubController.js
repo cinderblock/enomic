@@ -91,7 +91,7 @@ var gh_oauth_token = process.env.GITHUB_OAUTH_TOKEN;
 
             for (var i = 1; i < match.length; i++) {
               var signature = match[i];
-              if (approved.indexOf(signature) == -1 && verify(sha, signature, logger)) {
+              if ((approved.indexOf(signature) == -1) && verify(sha, signature, logger)) {
                 approved.push(signature);
                 logger.log('Approved: ' + signature);
               } else {
