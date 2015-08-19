@@ -87,19 +87,19 @@ var gh_oauth_token = process.env.GITHUB_OAUTH_TOKEN;
               return end('PR is not mergeable');
             }
 
-            var approvals = 0;
+            var approved = [];
 
             for (var i = 1; i < match.length; i++) {
               var signature = match[i];
-              if (verify(sha, signature, logger)) {
-                approvals++;
+              if (approved.indexOf(signature) == -1 && verify(sha, signature, logger)) {
+                approved.push(signature);
                 logger.log('Approved: ' + signature);
               } else {
                 logger.log('Rejected: ' + signature);
               }
             }
 
-            if (approvals < 2) {
+            if (approved.length < 2) {
               logger.log('Signature verification failed');
               return end('Signature verification failed');
             }
