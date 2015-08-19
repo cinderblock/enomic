@@ -72,7 +72,6 @@ var gh_oauth_token = process.env.GITHUB_OAUTH_TOKEN;
             // comment did not have the #approve hashtag
             return res.send();
           }
-          var signature = match[1];
           getPr(prNumber, function(err, pr) {
             if (err) {
               logger.error(err);
@@ -87,7 +86,20 @@ var gh_oauth_token = process.env.GITHUB_OAUTH_TOKEN;
               logger.log('Unclean merge state');
               return end('PR is not mergeable');
             }
-            if (!verify(sha, signature, logger)) {
+
+            var approvals = 0;
+
+            for (var i = 1; i < match.length; i++) {
+              var signature = match[i];
+              if (verify(sha, signature, logger)) {
+                approvals++;
+                logger.log('Approved: ' + signature);
+              } else {
+                logger.log('Rejected: ' + signature);
+              }
+            }
+
+            if (approvals < 2) {
               logger.log('Signature verification failed');
               return end('Signature verification failed');
             }
